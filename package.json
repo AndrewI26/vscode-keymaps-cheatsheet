@@ -1,0 +1,32 @@
+{
+    "name": "keymap-viewer",
+    "displayName": "Keymap Viewer",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "activationEvents": [
+        "onCommand:keymapViewer.showKeymaps"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "keymapViewer.showKeymaps",
+                "title": "Show Keymaps"
+            }
+        ]
+    },
+    "scripts": {
+        "compile": "tsc -p ./"
+    },
+    "devDependencies": {
+        "@types/markdown-it": "^14.1.2",
+        "@types/node": "^24.10.1",
+        "@types/vscode": "^1.60.0",
+        "typescript": "^4.4.3"
+    },
+    "dependencies": {
+        "markdown-it": "^14.1.0"
+    }
+}
