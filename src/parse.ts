@@ -1,7 +1,8 @@
 import * as jsonc from 'jsonc-parser';
 
+export type EntryVal = { key: string, command: string, when: string, desc: string }
 export type CommentEntry = { type: 'comment'; value: string; offset: number };
-export type ObjectEntry = { type: 'object'; value: any; offset: number };
+export type ObjectEntry = { type: 'object'; value: EntryVal; offset: number };
 export type JsoncArrayEntry = CommentEntry | ObjectEntry;
 
 /**
@@ -10,7 +11,7 @@ export type JsoncArrayEntry = CommentEntry | ObjectEntry;
  *
  * Throws if the top-level value is not an array.
  */
-export function parseKeybindings(text: string): (Omit<JsoncArrayEntry, "offset">)[] {
+export function parseKeybindings(text: string): JsoncArrayEntry[] {
     const entries: JsoncArrayEntry[] = [];
 
     let arrayDepth = 0;

@@ -5,50 +5,67 @@ import * as fs from "fs";
 import * as os from "os"
 import MarkdownIt from "markdown-it";
 import { parseKeybindings } from "./parse";
+import { generateColumn, generateStyles } from "./generateHtml";
 
-function generateVsCodeRoot(): string {
+function getActiveKeybindingsPath() {
+  const keybindingsFileName = "keybindings.json"
   const platform = process.platform;
   const homedir = os.homedir();
   const appName = (vscode.env.appName || "").toLowerCase();
+
   let productFolder = "Code";
   if (appName.includes("insiders")) productFolder = "Code - Insiders";
   else if (appName.includes("vscodium")) productFolder = "VSCodium";
 
-  if (platform === "darwin") return path.join(homedir, "Library", "Application Support", productFolder, "User");
-  if (platform === "win32") return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User");
-  return path.join(homedir, ".config", productFolder, "User");
+  if (platform === "darwin") return path.join(homedir, "Library", "Application Support", productFolder, "User", keybindingsFileName);
+  if (platform === "win32") return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User", keybindingsFileName);
+  const vscodeRoot = path.join(homedir, ".config", productFolder, "User", keybindingsFileName);
+
+  const defaultKB = path.join(vscodeRoot, keybindingsFileName);
+  if (fs.existsSync(defaultKB)) return defaultKB;
 }
 
-function getActiveKeybindingsPath() {
-  try {
-    const constructedRoot = generateVsCodeRoot();
-    const defaultKB = path.join(constructedRoot, "keybindings.json");
-    if (fs.existsSync(defaultKB)) return defaultKB;
-  }
-  catch (err) {
-    console.error("getActiveKeybindingsPath error:", err);
-    throw new Error("Unable to access keybindings path");
-  }
-}
+const parseLineComment = (line: string) => line.indexOf("//") === -1 ? "" : line.slice(line.indexOf("//") + 2).trimStart()
 
+export type GroupedKeybindings = Map<string, { desc: string, key: string }[]>
+
+export const UNGROUPED_KEY = "_ungrouped_"
+
+function groupKeybinds(keybindsEntries: ReturnType<typeof parseKeybindings>) {
+  // A group is a section of keybinds with a shared title
+  const map: GroupedKeybindings = new Map();
+  map.set(UNGROUPED_KEY, [])
+
+  for (const entry of keybindsEntries) {
+    if (entry.type === "comment") {
+      const groupName = parseLineComment(entry.value)
+      if (!map.has(groupName)) {
+        map.set(groupName, [])
+      }
+    }
+    if (entry.type === "object") {
+      const keys = Array.from(map.keys())
+      const lastKey = keys.length > 0 ? keys[keys.length - 1] : UNGROUPED_KEY
+
+      map.get(lastKey)!.push({ desc: entry.value.desc, key: entry.value.key })
+    }
+  }
+  return map
+}
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
     "keymapViewer.showKeymaps",
     async (keymapsConfigPath) => {
-      let appSettingsPath;
-      if (keymapsConfigPath) {
-        appSettingsPath = keymapsConfigPath;
-      } else { getActiveKeybindingsPath() };
-
-
+      const appSettingsPath = keymapsConfigPath || getActiveKeybindingsPath()
 
       if (!fs.existsSync(appSettingsPath)) {
         vscode.window.showErrorMessage(
           "Could not find keybindings.json for the current profile."
         );
         return;
-      } const content = fs.readFileSync(appSettingsPath, "utf8");
+      }
+      const content = fs.readFileSync(appSettingsPath, "utf8");
       const panel = vscode.window.createWebviewPanel("keybindingsMarkdownView", "Keybindings Cheatsheet", vscode.ViewColumn.One, { enableScripts: false });
 
       panel.webview.html = getMarkdownHtml(content);
@@ -63,33 +80,26 @@ export function deactivate() { }
 function getMarkdownHtml(content: string) {
   const md = new MarkdownIt({
     html: true,
-    linkify: true,
     typographer: true
   });
 
+  // Ignore comments before or after the array of keybindings.
+  // These will mess with the parser
   const cleanObj = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1)
+  const parsedKeybindings = parseKeybindings(cleanObj)
+  const groupedKeybindings = groupKeybinds(parsedKeybindings)
 
-  const events = parseKeybindings(cleanObj)
-
-  const markdownContent = `# Your Cool VS Code Keybindings\n\nHere are your current keybindings in JSON format: ${generateVsCodeRoot()}\n\n\`\`\`json\n${getActiveKeybindingsPath()}\n\`\`\``;
-  const rendered = md.render(markdownContent);
-
-  return `<!DOCTYPE html>
+  return /* html */`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keybindings</title>
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 20px; }
-h1 { color: #569cd6; }
-pre { background: #252526; padding: 15px; border-radius: 6px; overflow-x: auto; }
-code { font-family: 'Fira Code', monospace; }
-a { color: #4fc1ff; }
-</style>
+${generateStyles()}
 </head>
 <body>
-${rendered}
+<h1>Keybindings Cheatsheet</h1>
+  ${generateColumn(groupedKeybindings)}
 </body>
 </html>`;
 }

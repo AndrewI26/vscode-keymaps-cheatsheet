@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deactivate = exports.activate = void 0;
+exports.deactivate = exports.activate = exports.UNGROUPED_KEY = void 0;
 // TODO: Only import the functions I need
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
@@ -34,7 +34,9 @@ const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
 const markdown_it_1 = __importDefault(require("markdown-it"));
 const parse_1 = require("./parse");
-function generateVsCodeRoot() {
+const generateHtml_1 = require("./generateHtml");
+function getActiveKeybindingsPath() {
+    const keybindingsFileName = "keybindings.json";
     const platform = process.platform;
     const homedir = os.homedir();
     const appName = (vscode.env.appName || "").toLowerCase();
@@ -44,33 +46,38 @@ function generateVsCodeRoot() {
     else if (appName.includes("vscodium"))
         productFolder = "VSCodium";
     if (platform === "darwin")
-        return path.join(homedir, "Library", "Application Support", productFolder, "User");
+        return path.join(homedir, "Library", "Application Support", productFolder, "User", keybindingsFileName);
     if (platform === "win32")
-        return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User");
-    return path.join(homedir, ".config", productFolder, "User");
+        return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User", keybindingsFileName);
+    const vscodeRoot = path.join(homedir, ".config", productFolder, "User", keybindingsFileName);
+    const defaultKB = path.join(vscodeRoot, keybindingsFileName);
+    if (fs.existsSync(defaultKB))
+        return defaultKB;
 }
-function getActiveKeybindingsPath() {
-    try {
-        const constructedRoot = generateVsCodeRoot();
-        const defaultKB = path.join(constructedRoot, "keybindings.json");
-        if (fs.existsSync(defaultKB))
-            return defaultKB;
+const parseLineComment = (line) => line.indexOf("//") === -1 ? "" : line.slice(line.indexOf("//") + 2).trimStart();
+exports.UNGROUPED_KEY = "_ungrouped_";
+function groupKeybinds(keybindsEntries) {
+    // A group is a section of keybinds with a shared title
+    const map = new Map();
+    map.set(exports.UNGROUPED_KEY, []);
+    for (const entry of keybindsEntries) {
+        if (entry.type === "comment") {
+            const groupName = parseLineComment(entry.value);
+            if (!map.has(groupName)) {
+                map.set(groupName, []);
+            }
+        }
+        if (entry.type === "object") {
+            const keys = Array.from(map.keys());
+            const lastKey = keys.length > 0 ? keys[keys.length - 1] : exports.UNGROUPED_KEY;
+            map.get(lastKey).push({ desc: entry.value.desc, key: entry.value.key });
+        }
     }
-    catch (err) {
-        console.error("getActiveKeybindingsPath error:", err);
-        throw new Error("Unable to access keybindings path");
-    }
+    return map;
 }
 function activate(context) {
     const disposable = vscode.commands.registerCommand("keymapViewer.showKeymaps", async (keymapsConfigPath) => {
-        let appSettingsPath;
-        if (keymapsConfigPath) {
-            appSettingsPath = keymapsConfigPath;
-        }
-        else {
-            getActiveKeybindingsPath();
-        }
-        ;
+        const appSettingsPath = keymapsConfigPath || getActiveKeybindingsPath();
         if (!fs.existsSync(appSettingsPath)) {
             vscode.window.showErrorMessage("Could not find keybindings.json for the current profile.");
             return;
@@ -87,29 +94,24 @@ exports.deactivate = deactivate;
 function getMarkdownHtml(content) {
     const md = new markdown_it_1.default({
         html: true,
-        linkify: true,
         typographer: true
     });
+    // Ignore comments before or after the array of keybindings.
+    // These will mess with the parser
     const cleanObj = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1);
-    const events = (0, parse_1.parseKeybindings)(cleanObj);
-    const markdownContent = `# Your Cool VS Code Keybindings\n\nHere are your current keybindings in JSON format: ${generateVsCodeRoot()}\n\n\`\`\`json\n${getActiveKeybindingsPath()}\n\`\`\``;
-    const rendered = md.render(markdownContent);
-    return `<!DOCTYPE html>
+    const parsedKeybindings = (0, parse_1.parseKeybindings)(cleanObj);
+    const groupedKeybindings = groupKeybinds(parsedKeybindings);
+    return /* html */ `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keybindings</title>
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 20px; }
-h1 { color: #569cd6; }
-pre { background: #252526; padding: 15px; border-radius: 6px; overflow-x: auto; }
-code { font-family: 'Fira Code', monospace; }
-a { color: #4fc1ff; }
-</style>
+${(0, generateHtml_1.generateStyles)()}
 </head>
 <body>
-${rendered}
+<h1>Keybindings Cheatsheet</h1>
+  ${(0, generateHtml_1.generateColumn)(groupedKeybindings)}
 </body>
 </html>`;
 }
