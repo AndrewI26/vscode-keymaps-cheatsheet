@@ -10,9 +10,6 @@ function generateStyles() {
     pre { background: #252526; padding: 15px; border-radius: 6px; overflow-x: auto; }
     code { font-family: 'Fira Code', monospace; }
     a { color: #4fc1ff; }
-    .title {
-        background-color: #3d084ad2;
-    }
     .kb-group-container {
         background-color: #3a3a3aff;
         flex: 1 1 100%;
