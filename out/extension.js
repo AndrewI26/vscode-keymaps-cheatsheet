@@ -50,7 +50,7 @@ function getActiveKeybindingsPath() {
     if (platform === "win32")
         return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User", keybindingsFileName);
     const vscodeRoot = path.join(homedir, ".config", productFolder, "User", keybindingsFileName);
-    const defaultKB = path.join(vscodeRoot, keybindingsFileName);
+    const defaultKB = vscodeRoot;
     if (fs.existsSync(defaultKB))
         return defaultKB;
 }
@@ -78,13 +78,14 @@ function groupKeybinds(keybindsEntries) {
 function activate(context) {
     const disposable = vscode.commands.registerCommand("keymapViewer.showKeymaps", async (keymapsConfigPath) => {
         const appSettingsPath = keymapsConfigPath || getActiveKeybindingsPath();
-        if (!fs.existsSync(appSettingsPath)) {
-            vscode.window.showErrorMessage("Could not find keybindings.json for the current profile.");
-            return;
+        if (fs.existsSync(appSettingsPath)) {
+            const content = fs.readFileSync(appSettingsPath, "utf8");
+            const panel = vscode.window.createWebviewPanel("keybindingsMarkdownView", "Keybindings Cheatsheet", vscode.ViewColumn.One, { enableScripts: false });
+            panel.webview.html = getMarkdownHtml(content);
         }
-        const content = fs.readFileSync(appSettingsPath, "utf8");
-        const panel = vscode.window.createWebviewPanel("keybindingsMarkdownView", "Keybindings Cheatsheet", vscode.ViewColumn.One, { enableScripts: false });
-        panel.webview.html = getMarkdownHtml(content);
+        else {
+            vscode.window.showErrorMessage(`Could not find keybindings.json: (${appSettingsPath})`);
+        }
     });
     context.subscriptions.push(disposable);
 }
