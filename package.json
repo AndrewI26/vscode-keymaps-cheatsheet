@@ -18,17 +18,20 @@
         ]
     },
     "scripts": {
-        "compile": "tsc -p ./",
-        "watch": "tsc -w",
-        "dev": "npm run watch & code --extensionDevelopmentPath=."
+        "copy-hbs": "copyfiles -u 1 src/**/*.hbs out",
+        "compile": "npm run copy-hbs && tsc -p ./",
+        "watch": "npm run copy-hbs && tsc -w",
+        "dev": "npm run copy-hbs && npm run watch"
     },
     "devDependencies": {
         "@types/markdown-it": "^14.1.2",
         "@types/node": "^24.10.1",
         "@types/vscode": "^1.60.0",
+        "copyfiles": "^2.4.1",
         "typescript": "^4.4.3"
     },
     "dependencies": {
+        "handlebars": "^4.7.8",
         "jsonc-parser": "^3.3.1",
         "markdown-it": "^14.1.0",
         "vscode-json-languageservice": "^5.6.3"

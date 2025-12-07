@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                        // modern JS
-    "module": "CommonJS",                      // Node uses CommonJS
-    "lib": ["ES2020"],                         // JS features
-    "outDir": "out",                           // compiled JS goes here
-    "rootDir": "src",                          // source files
-    "strict": true,                            // enable strict type checks
-    "esModuleInterop": true,                   // allow import of commonjs modules
-    "skipLibCheck": true,                      // skip type checking node_modules
-    "forceConsistentCasingInFileNames": true, // file name consistency
-    "sourceMap": true                          // optional, helps debugging
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": [
+      "ES2020"
+    ],
+    "outDir": "out",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "include": [
+    "src/**/*",
+    "src/**/.hbs"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
 }

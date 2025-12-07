@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as os from "os"
 import MarkdownIt from "markdown-it";
 import { parseKeybindings } from "./parse";
-import { generateColumn, generateStyles } from "./generateHtml";
+import { generateHtml } from "./generateHtml";
 
 function getActiveKeybindingsPath() {
   const keybindingsFileName = "keybindings.json"
@@ -82,6 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() { }
 
+
 function getMarkdownHtml(content: string) {
   const md = new MarkdownIt({
     html: true,
@@ -94,17 +95,5 @@ function getMarkdownHtml(content: string) {
   const parsedKeybindings = parseKeybindings(cleanObj)
   const groupedKeybindings = groupKeybinds(parsedKeybindings)
 
-  return /* html */`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keybindings</title>
-${generateStyles()}
-</head>
-<body>
-<h1>Keybindings Cheatsheet</h1>
-  ${generateColumn(groupedKeybindings)}
-</body>
-</html>`;
+  return generateHtml(groupedKeybindings);
 }

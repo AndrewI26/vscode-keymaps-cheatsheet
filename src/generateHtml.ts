@@ -1,57 +1,45 @@
+import path from "path";
 import { GroupedKeybindings, UNGROUPED_KEY } from "./extension"
+import Handlebars from "handlebars";
+import { readFileSync } from "fs"
 
-export function generateStyles() {
-    return /* html */`
-    <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 20px; }
-    h1 { color: var(--vscode-foreground) }
-    pre { background: #252526; padding: 15px; border-radius: 6px; overflow-x: auto; }
-    code { font-family: 'Fira Code', monospace; }
-    a { color: #4fc1ff; }
-    .kb-group-container {
-        background-color: #3a3a3aff;
-        flex: 1 1 100%;
-    }
-    .kbs-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
+const vibrantColors = [
+    "#FF595E",
+    "#00B4D8",
+    "#F72585",
+    "#FF9F1C",
+    "#7209B7",
+    "#FF6F61",
+    "#3A0CA3",
+    "#3FBF7F",
+    "#FFBA08",
+    "#0096C7",
+    "#4361EE",
+    "#E63946",
+    "#80ED99",
+    "#4CC9F0",
+    "#FF5D8F",
+    "#06D6A0",
+    "#5F0F40",
+    "#F1FA3C",
+    "#9D4EDD",
+    "#FFBE0B"
+];
 
+export function generateHtml(keybindings: GroupedKeybindings) {
+    const groups = Array.from(keybindings.entries())
+        .filter(([k, v]) => v.length !== 0)
+        .map(([key, value], index) => ({
+            title: key === UNGROUPED_KEY ? "Misc" : key,
+            color: vibrantColors[index % vibrantColors.length],
+            items: value.map(({ desc, key }) => ({
+                desc: desc ?? "No description provided",
+                key
+            }))
+        }));
 
-    /* On wider screens, items take 48% width (~2 columns with gap) */
-    @media (min-width: 600px) {
-        .kb-group-container {
-            flex: 1 1 48%;
-        }
-    }
-    /* On large screens, items take 30% width (~3 columns) */
-    @media (min-width: 900px) {
-        .kb-group-container {
-            flex: 1 1 30%;
-        }
-    }
-    </style>`
-}
-
-function getRandomHexColor() {
-    const randomInt = Math.floor(Math.random() * 0x1000000);
-    const hex = randomInt.toString(16).padStart(6, '0');
-    return `#${hex}`;
-}
-
-export function generateColumn(keybindings: GroupedKeybindings) {
-    return /* html */`
-    <div class="kbs-container">
-    ${Array.from(keybindings.entries()).map(([key, value]) => /* html */`
-        <div class="kb-group-container">
-            <h2 style="background-color: ${getRandomHexColor()}88;">${key === UNGROUPED_KEY ? "Misc" : key}</h2>
-            ${value.map(({ desc, key }) => /* html */`
-            <p>${desc}</p>
-            <p>${key}</p>
-            `)}
-        </div>
-        `).join("")}
-    </div>
-    `
+    const templatePath = path.join(__dirname, "keybindings.hbs");
+    const templateContent = readFileSync(templatePath, "utf-8");
+    const template = Handlebars.compile(templateContent);
+    return template({ groups });
 }

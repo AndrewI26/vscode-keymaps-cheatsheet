@@ -102,18 +102,6 @@ function getMarkdownHtml(content) {
     const cleanObj = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1);
     const parsedKeybindings = (0, parse_1.parseKeybindings)(cleanObj);
     const groupedKeybindings = groupKeybinds(parsedKeybindings);
-    return /* html */ `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keybindings</title>
-${(0, generateHtml_1.generateStyles)()}
-</head>
-<body>
-<h1>Keybindings Cheatsheet</h1>
-  ${(0, generateHtml_1.generateColumn)(groupedKeybindings)}
-</body>
-</html>`;
+    return (0, generateHtml_1.generateHtml)(groupedKeybindings);
 }
 //# sourceMappingURL=extension.js.map
