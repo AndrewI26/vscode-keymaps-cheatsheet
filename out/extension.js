@@ -22,9 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = exports.UNGROUPED_KEY = void 0;
 // TODO: Only import the functions I need
@@ -32,9 +29,9 @@ const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
-const markdown_it_1 = __importDefault(require("markdown-it"));
 const parse_1 = require("./parse");
 const generateHtml_1 = require("./generateHtml");
+const DEFAULT_THEME = generateHtml_1.Theme.Random;
 function getActiveKeybindingsPath() {
     const keybindingsFileName = "keybindings.json";
     const platform = process.platform;
@@ -51,10 +48,11 @@ function getActiveKeybindingsPath() {
         return path.join(process.env.APPDATA || path.join(homedir, "AppData", "Roaming"), productFolder, "User", keybindingsFileName);
     const vscodeRoot = path.join(homedir, ".config", productFolder, "User", keybindingsFileName);
     const defaultKB = vscodeRoot;
-    if (fs.existsSync(defaultKB))
-        return defaultKB;
+    return defaultKB;
 }
-const parseLineComment = (line) => line.indexOf("//") === -1 ? "" : line.slice(line.indexOf("//") + 2).trimStart();
+const parseLineComment = (line) => line.indexOf("//") === -1
+    ? ""
+    : line.slice(line.indexOf("//") + 2).trimStart();
 exports.UNGROUPED_KEY = "_ungrouped_";
 function groupKeybinds(keybindsEntries) {
     // A group is a section of keybinds with a shared title
@@ -76,12 +74,17 @@ function groupKeybinds(keybindsEntries) {
     return map;
 }
 function activate(context) {
-    const disposable = vscode.commands.registerCommand("keymapViewer.showKeymaps", async (keymapsConfigPath) => {
-        const appSettingsPath = keymapsConfigPath || getActiveKeybindingsPath();
+    const disposable = vscode.commands.registerCommand("keymapViewer.showKeymaps", async (args) => {
+        const appSettingsPath = args?.keymapsConfigPath || getActiveKeybindingsPath();
+        const upperTheme = args?.theme?.toUpperCase();
+        if (!Object.values(generateHtml_1.Theme).includes(upperTheme)) {
+            vscode.window.showErrorMessage(`Invalid theme (${args?.theme})... choosing random color scheme`);
+        }
+        const theme = generateHtml_1.argToTheme[args.theme ? args.theme?.toUpperCase() : DEFAULT_THEME];
         if (fs.existsSync(appSettingsPath)) {
             const content = fs.readFileSync(appSettingsPath, "utf8");
             const panel = vscode.window.createWebviewPanel("keybindingsMarkdownView", "Keybindings Cheatsheet", vscode.ViewColumn.One, { enableScripts: false });
-            panel.webview.html = getMarkdownHtml(content);
+            panel.webview.html = getMarkdownHtml(content, theme);
         }
         else {
             vscode.window.showErrorMessage(`Could not find keybindings.json: (${appSettingsPath})`);
@@ -92,16 +95,12 @@ function activate(context) {
 exports.activate = activate;
 function deactivate() { }
 exports.deactivate = deactivate;
-function getMarkdownHtml(content) {
-    const md = new markdown_it_1.default({
-        html: true,
-        typographer: true
-    });
+function getMarkdownHtml(content, theme) {
     // Ignore comments before or after the array of keybindings.
     // These will mess with the parser
     const cleanObj = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1);
     const parsedKeybindings = (0, parse_1.parseKeybindings)(cleanObj);
     const groupedKeybindings = groupKeybinds(parsedKeybindings);
-    return (0, generateHtml_1.generateHtml)(groupedKeybindings);
+    return (0, generateHtml_1.generateHtml)(groupedKeybindings, theme);
 }
 //# sourceMappingURL=extension.js.map

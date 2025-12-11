@@ -1,99 +1,101 @@
-<!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keybindings</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            padding: 20px;
-        }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        padding: 20px;
+      }
 
-        h1 {
-            color: var(--vscode-foreground);
-        }
+      h1 {
+        color: var(--vscode-foreground);
+      }
 
-        pre {
-            background: #252526;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
+      pre {
+        background: #252526;
+        padding: 15px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
 
-        code {
-            font-family: 'Fira Code', monospace;
-        }
+      code {
+        font-family: "Fira Code", monospace;
+      }
 
-        a {
-            color: #4fc1ff;
-        }
+      a {
+        color: #4fc1ff;
+      }
 
+      .kb-group-container {
+        background-color: var(--vscode-panel-background);
+        flex: 1 1 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .kbs-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .kb-title {
+        padding: 8px;
+        width: fit-content;
+      }
+
+      .kb-entry {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .kb-cell {
+      }
+
+      @media (max-width: 199px) {
         .kb-group-container {
-            background-color: var(--vscode-panel-background);
-            flex: 1 1 100%;
-            padding-left: 10px;
-            padding-right: 10px;
+          flex: 1 1 100%;
         }
+      }
 
-        .kbs-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
+      @media (min-width: 200px) and (max-width: 899px) {
+        .kb-group-container {
+          flex: 1 1 48%;
         }
+      }
 
-        .kb-title {
-            padding: 8px;
-            width: fit-content;
+      @media (min-width: 900px) {
+        .kb-group-container {
+          flex: 1 1 30%;
         }
-
-        .kb-entry {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .kb-cell {}
-
-        @media (max-width: 199px) {
-            .kb-group-container {
-                flex: 1 1 100%;
-            }
-        }
-
-        @media (min-width: 200px) and (max-width: 899px) {
-            .kb-group-container {
-                flex: 1 1 48%;
-            }
-        }
-
-        @media (min-width: 900px) {
-            .kb-group-container {
-                flex: 1 1 30%;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>Keybindings Cheatsheet</h1>
     <div class="kbs-container">
-        {{#each groups}}
+      {{#each groups}}
         <div class="kb-group-container">
-            <h4 class="kb-title" style="background-color: {{color}}88;">
-                {{title}}
-            </h4>
-            {{#each items}}
+          <h4 class="kb-title" style="background-color: {{color}}88;">
+            {{title}}
+          </h4>
+          {{#each items}}
             <div class="kb-entry">
-                <p class="kb-cell">{{desc}}</p>
-                <p class="kb-cell">{{key}}</p>
+              <p class="kb-cell">{{desc}}</p>
+              <p class="kb-cell">{{key}}</p>
             </div>
-            {{/each}}
+          {{/each}}
         </div>
-        {{/each}}
+      {{/each}}
     </div>
-</body>
+  </body>
 
 </html>

@@ -50,12 +50,14 @@ function parseKeybindings(text) {
             }
         },
         onObjectEnd(offset, length) {
-            if (arrayDepth === 1 && objectDepth === 1 && currentObjectStart !== null) {
+            if (arrayDepth === 1 &&
+                objectDepth === 1 &&
+                currentObjectStart !== null) {
                 const objStart = currentObjectStart;
                 const objEnd = offset + length;
                 const raw = text.slice(objStart, objEnd);
                 const parsed = jsonc.parse(raw);
-                entries.push({ type: 'object', value: parsed, offset: objStart });
+                entries.push({ type: "object", value: parsed, offset: objStart });
                 currentObjectStart = null;
             }
             objectDepth--;
@@ -63,13 +65,13 @@ function parseKeybindings(text) {
         onComment(offset, length) {
             if (arrayDepth === 1 && objectDepth === 0) {
                 const raw = text.slice(offset, offset + length);
-                entries.push({ type: 'comment', value: raw, offset });
+                entries.push({ type: "comment", value: raw, offset });
             }
-        }
+        },
     });
     const parsedTop = jsonc.parse(text);
     if (!Array.isArray(parsedTop)) {
-        throw new Error('Top-level JSONC value must be an array.');
+        throw new Error("Top-level JSONC value must be an array.");
     }
     entries.sort((a, b) => a.offset - b.offset);
     return entries.map(({ offset, ...rest }) => rest);
