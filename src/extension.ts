@@ -89,14 +89,13 @@ export function activate(context: vscode.ExtensionContext) {
       const appSettingsPath =
         args?.keymapsConfigPath || getActiveKeybindingsPath();
 
-      const upperTheme = args?.theme?.toUpperCase();
-      if (!Object.values(Theme).includes(upperTheme as Theme)) {
+      const themeArg = args?.theme;
+      if (!Object.values(Theme).includes(themeArg as Theme)) {
         vscode.window.showErrorMessage(
-          `Invalid theme (${args?.theme})... choosing random color scheme`,
+          `Invalid theme (${themeArg})... choosing random color scheme`,
         );
       }
-      const theme =
-        argToTheme[args.theme ? args.theme?.toUpperCase() : DEFAULT_THEME];
+      const theme = argToTheme[(args?.theme || DEFAULT_THEME)?.toUpperCase()];
 
       if (fs.existsSync(appSettingsPath)) {
         const content = fs.readFileSync(appSettingsPath, "utf8");

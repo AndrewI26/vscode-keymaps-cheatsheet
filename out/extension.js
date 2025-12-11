@@ -76,11 +76,11 @@ function groupKeybinds(keybindsEntries) {
 function activate(context) {
     const disposable = vscode.commands.registerCommand("keymapViewer.showKeymaps", async (args) => {
         const appSettingsPath = args?.keymapsConfigPath || getActiveKeybindingsPath();
-        const upperTheme = args?.theme?.toUpperCase();
-        if (!Object.values(generateHtml_1.Theme).includes(upperTheme)) {
-            vscode.window.showErrorMessage(`Invalid theme (${args?.theme})... choosing random color scheme`);
+        const themeArg = args?.theme;
+        if (!Object.values(generateHtml_1.Theme).includes(themeArg)) {
+            vscode.window.showErrorMessage(`Invalid theme (${themeArg})... choosing random color scheme`);
         }
-        const theme = generateHtml_1.argToTheme[args.theme ? args.theme?.toUpperCase() : DEFAULT_THEME];
+        const theme = generateHtml_1.argToTheme[(args?.theme || DEFAULT_THEME)?.toUpperCase()];
         if (fs.existsSync(appSettingsPath)) {
             const content = fs.readFileSync(appSettingsPath, "utf8");
             const panel = vscode.window.createWebviewPanel("keybindingsMarkdownView", "Keybindings Cheatsheet", vscode.ViewColumn.One, { enableScripts: false });

@@ -5,39 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keybindings</title>
     <style>
+      :root {
+        --table-border: color-mix(
+          in srgb,
+          var(--vscode-editor-foreground) 20%,
+          black
+        );
+        --table-alternate: color-mix(
+          in srgb,
+          var(--vscode-editor-background) 99%,
+          white
+        );
+      }
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
           sans-serif;
-        background-color: #1e1e1e;
-        color: #d4d4d4;
+        background-color: var(--vscode-editor-background);
+        color: var(--vscode-editor-foreground);
         padding: 20px;
       }
 
       h1 {
-        color: var(--vscode-foreground);
+        color: var(--vscode-editor-foreground);
       }
-
-      pre {
-        background: #252526;
-        padding: 15px;
-        border-radius: 6px;
-        overflow-x: auto;
-      }
-
-      code {
-        font-family: "Fira Code", monospace;
-      }
-
-      a {
-        color: #4fc1ff;
+      h4 {
+        margin: 0;
       }
 
       .kb-group-container {
         background-color: var(--vscode-panel-background);
+        position: relative;
         flex: 1 1 100%;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding: 0;
       }
 
       .kbs-container {
@@ -47,8 +47,14 @@
       }
 
       .kb-title {
-        padding: 8px;
-        width: fit-content;
+        width: 100%;
+        box-sizing: border-box;
+        font-weight: bold;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        padding-left: 16px;
+        padding-right: 16px;
+        font-size: 1rem;
       }
 
       .kb-entry {
@@ -56,16 +62,34 @@
         justify-content: space-between;
       }
 
-      .kb-cell {
+      table.kb-table {
+        width: 100%
+        border-collapse: collapse;
+        border: 1px solid var(--table-border);
       }
 
-      @media (max-width: 199px) {
+      table.kb-table th,
+      table.kb-table td {
+        border: none;
+        padding: 10px;
+      }
+
+      table.kb-table tr:not(:last-child) td,
+      table.kb-table tr:not(:last-child) th {
+        border-bottom: 1px solid var(--table-border);
+      }
+
+      table.kb-table tbody tr:nth-child(even) {
+        background-color: var(--table-alternate);
+      }
+
+      @media (max-width: 299px) {
         .kb-group-container {
           flex: 1 1 100%;
         }
       }
 
-      @media (min-width: 200px) and (max-width: 899px) {
+      @media (min-width: 300px) and (max-width: 899px) {
         .kb-group-container {
           flex: 1 1 48%;
         }
@@ -87,12 +111,16 @@
           <h4 class="kb-title" style="background-color: {{color}}88;">
             {{title}}
           </h4>
-          {{#each items}}
-            <div class="kb-entry">
-              <p class="kb-cell">{{desc}}</p>
-              <p class="kb-cell">{{key}}</p>
-            </div>
-          {{/each}}
+          <table class="kb-table">
+            <tbody>
+              {{#each items}}
+                <tr>
+                  <td class="kb-cell">{{desc}}</td>
+                  <td class="kb-cell">{{key}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
         </div>
       {{/each}}
     </div>
