@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keybindings</title>
     <style>
-          :root {
-            --table-border: color-mix(
+      :root {
+        --table-border: color-mix(
           in srgb,
           var(--vscode-editor-foreground) 20%,
           black
@@ -17,6 +17,7 @@
           white
         );
       }
+
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
@@ -29,6 +30,7 @@
       h1 {
         color: var(--vscode-editor-foreground);
       }
+
       h4 {
         margin: 0;
       }
@@ -42,7 +44,6 @@
       }
 
       .cheatsheet {
-        column-count: 3;
         column-gap: 16px;
       }
 
@@ -50,11 +51,11 @@
         width: 100%;
         box-sizing: border-box;
         font-weight: bold;
-        padding-top: .6rem;
-        padding-bottom: .6rem;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
         padding-left: 1rem;
         padding-right: 1rem;
-        font-size: .9rem;
+        font-size: 0.9rem;
       }
 
       .kb-entry {
@@ -63,9 +64,9 @@
       }
 
       table.kb-table {
-        width: 100%
+        width: 100%;
         border-collapse: collapse;
-        border: 1px solid var(--table-border);
+        border: 1px solid var(--table-border) !important;
         break-inside: avoid;
         margin-bottom: 16px;
         width: 100%;
@@ -73,7 +74,7 @@
 
       table.kb-table th,
       table.kb-table td {
-        border: none;
+        border: 1px solid var(--table-border);
         padding: 10px;
       }
 
@@ -86,21 +87,39 @@
         background-color: var(--table-alternate);
       }
 
-      @media (max-width: 299px) {
-        .kb-group-container {
-          flex: 1 1 100%;
+      .right-cell {
+        text-align: right;
+      }
+
+      tr:nth-child(even) td.right-cell {
+        border-left: 1px solid var(--table-alternate);
+      }
+      tr:nth-child(even) td.left-cell {
+        border-right: 1px solid var(--table-alternate);
+      }
+
+      tr:nth-child(odd) td.left-cell {
+        border-right: 1px solid var(--vscode-panel-background);
+      }
+      tr:nth-child(odd) td.right-cell {
+        border-left: 1px solid var(--vscode-panel-background);
+      }
+
+      @media (max-width: 599px) {
+        .cheatsheet {
+          column-count: 1;
         }
       }
 
-      @media (min-width: 300px) and (max-width: 899px) {
-        .kb-group-container {
-          flex: 1 1 48%;
+      @media (min-width: 600px) and (max-width: 899px) {
+        .cheatsheet {
+          column-count: 2;
         }
       }
 
       @media (min-width: 900px) {
-        .kb-group-container {
-          flex: 1 1 30%;
+        .cheatsheet {
+          column-count: 3;
         }
       }
     </style>
@@ -118,8 +137,8 @@
             <tbody>
               {{#each items}}
                 <tr>
-                  <td class="kb-cell">{{desc}}</td>
-                  <td class="kb-cell">{{key}}</td>
+                  <td class="kb-cell left-cell">{{desc}}</td>
+                  <td class="kb-cell right-cell">{{key}}</td>
                 </tr>
               {{/each}}
             </tbody>
