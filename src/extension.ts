@@ -6,7 +6,7 @@ import * as os from "os";
 import { parseKeybindings } from "./parse";
 import { argToTheme, generateHtml, Theme } from "./generateHtml";
 
-const DEFAULT_THEME = Theme.Random;
+const DEFAULT_THEME = Theme.Catppuccin;
 
 function getActiveKeybindingsPath() {
   const keybindingsFileName = "keybindings.json";

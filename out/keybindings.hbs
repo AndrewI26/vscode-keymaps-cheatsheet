@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keybindings</title>
     <style>
-      :root {
-        --table-border: color-mix(
+          :root {
+            --table-border: color-mix(
           in srgb,
           var(--vscode-editor-foreground) 20%,
           black
@@ -38,23 +38,23 @@
         position: relative;
         flex: 1 1 100%;
         padding: 0;
+        break-inside: avoid;
       }
 
-      .kbs-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
+      .cheatsheet {
+        column-count: 3;
+        column-gap: 16px;
       }
 
       .kb-title {
         width: 100%;
         box-sizing: border-box;
         font-weight: bold;
-        padding-top: 12px;
-        padding-bottom: 12px;
-        padding-left: 16px;
-        padding-right: 16px;
-        font-size: 1rem;
+        padding-top: .6rem;
+        padding-bottom: .6rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: .9rem;
       }
 
       .kb-entry {
@@ -63,9 +63,12 @@
       }
 
       table.kb-table {
-        width: 100%;
+        width: 100%
         border-collapse: collapse;
         border: 1px solid var(--table-border);
+        break-inside: avoid;
+        margin-bottom: 16px;
+        width: 100%;
       }
 
       table.kb-table th,
@@ -105,7 +108,7 @@
 
   <body>
     <h1>Keybindings Cheatsheet</h1>
-    <div class="kbs-container">
+    <div class="cheatsheet">
       {{#each groups}}
         <div class="kb-group-container">
           <h4 class="kb-title" style="background-color: {{color}}88;">

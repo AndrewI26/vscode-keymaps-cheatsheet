@@ -18,6 +18,7 @@ var Theme;
     Theme["Blue"] = "BLUE";
     Theme["Violet"] = "VIOLET";
     Theme["Gray"] = "GRAY";
+    Theme["Catppuccin"] = "CATPPUCCIN";
 })(Theme = exports.Theme || (exports.Theme = {}));
 exports.argToTheme = {
     RANDOM: Theme.Random,
@@ -28,6 +29,7 @@ exports.argToTheme = {
     BLUE: Theme.Blue,
     VIOLET: Theme.Violet,
     GRAY: Theme.Gray,
+    CATPPUCCIN: Theme.Catppuccin,
 };
 const randoms = [
     "#FF595E",
@@ -135,6 +137,21 @@ const grays = [
     "#202027",
     "#33333A",
 ];
+const catppuccin = [
+    "#8839ef",
+    "#04a5e5",
+    "#d20f39",
+    "#179299",
+    "#dd7878",
+    "#40a02b",
+    "#1e66f5",
+    "#ea76cb",
+    "#209fb5",
+    "#fe640b",
+    "#df8e1d",
+    "#e64553",
+    "#7287fd",
+];
 const themeColors = {
     [Theme.Random]: randoms,
     [Theme.Red]: reds,
@@ -144,6 +161,7 @@ const themeColors = {
     [Theme.Blue]: blues,
     [Theme.Violet]: violets,
     [Theme.Gray]: grays,
+    [Theme.Catppuccin]: catppuccin,
 };
 function generateHtml(keybindings, theme) {
     const currentColors = themeColors[theme];

@@ -12,6 +12,7 @@ export enum Theme {
   Blue = "BLUE",
   Violet = "VIOLET",
   Gray = "GRAY",
+  Catppuccin = "CATPPUCCIN",
 }
 
 export const argToTheme: Record<string, Theme> = {
@@ -23,6 +24,7 @@ export const argToTheme: Record<string, Theme> = {
   BLUE: Theme.Blue,
   VIOLET: Theme.Violet,
   GRAY: Theme.Gray,
+  CATPPUCCIN: Theme.Catppuccin,
 };
 
 const randoms = [
@@ -139,6 +141,22 @@ const grays = [
   "#33333A",
 ];
 
+const catppuccin = [
+  "#8839ef",
+  "#04a5e5",
+  "#d20f39",
+  "#179299",
+  "#dd7878",
+  "#40a02b",
+  "#1e66f5",
+  "#ea76cb",
+  "#209fb5",
+  "#fe640b",
+  "#df8e1d",
+  "#e64553",
+  "#7287fd",
+];
+
 const themeColors: Record<Theme, string[]> = {
   [Theme.Random]: randoms,
   [Theme.Red]: reds,
@@ -148,6 +166,7 @@ const themeColors: Record<Theme, string[]> = {
   [Theme.Blue]: blues,
   [Theme.Violet]: violets,
   [Theme.Gray]: grays,
+  [Theme.Catppuccin]: catppuccin,
 };
 
 export function generateHtml(keybindings: GroupedKeybindings, theme: Theme) {

@@ -31,7 +31,7 @@ const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
 const parse_1 = require("./parse");
 const generateHtml_1 = require("./generateHtml");
-const DEFAULT_THEME = generateHtml_1.Theme.Random;
+const DEFAULT_THEME = generateHtml_1.Theme.Catppuccin;
 function getActiveKeybindingsPath() {
     const keybindingsFileName = "keybindings.json";
     const platform = process.platform;
