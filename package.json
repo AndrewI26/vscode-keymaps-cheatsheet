@@ -1,18 +1,19 @@
 {
-  "name": "keymap-viewer",
-  "displayName": "Keymap Viewer",
-  "version": "0.0.1",
+  "name": "keybindings-cheatsheet",
+  "displayName": "Keybindings Cheatsheet",
+  "publisher": "andrewi",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.60.0"
   },
   "activationEvents": [
-    "onCommand:keymapViewer.showKeymaps"
+    "onCommand:keybindingsCheatsheet.showCheatsheet"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "keymapViewer.showKeymaps",
+        "command": "keybindingsCheatsheet.showCheatsheet",
         "title": "Show Keymaps"
       }
     ]
