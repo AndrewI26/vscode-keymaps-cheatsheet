@@ -1,8 +1,5 @@
-import path from "path";
 import { GroupedKeybindings, UNGROUPED_KEY } from "./extension";
-import Handlebars from "handlebars";
 import cheatsheetTemplate from "./keybindings.hbs";
-import { readFileSync } from "fs";
 
 export enum Theme {
   Random = "RANDOM",
@@ -39,16 +36,6 @@ const randoms = [
   "#3FBF7F",
   "#FFBA08",
   "#0096C7",
-  "#4361EE",
-  "#E63946",
-  "#80ED99",
-  "#4CC9F0",
-  "#FF5D8F",
-  "#06D6A0",
-  "#5F0F40",
-  "#F1FA3C",
-  "#9D4EDD",
-  "#FFBE0B",
 ];
 
 const reds = [
@@ -143,19 +130,16 @@ const grays = [
 ];
 
 const catppuccin = [
-  "#8839ef",
-  "#04a5e5",
   "#d20f39",
   "#179299",
-  "#dd7878",
+  "#8839ef",
   "#40a02b",
-  "#1e66f5",
   "#ea76cb",
-  "#209fb5",
   "#fe640b",
-  "#df8e1d",
+  "#04a5e5",
   "#e64553",
-  "#7287fd",
+  "#1e66f5",
+  "#df8e1d",
 ];
 
 const themeColors: Record<Theme, string[]> = {

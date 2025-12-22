@@ -1310,17 +1310,7 @@ var randoms = [
   "#3A0CA3",
   "#3FBF7F",
   "#FFBA08",
-  "#0096C7",
-  "#4361EE",
-  "#E63946",
-  "#80ED99",
-  "#4CC9F0",
-  "#FF5D8F",
-  "#06D6A0",
-  "#5F0F40",
-  "#F1FA3C",
-  "#9D4EDD",
-  "#FFBE0B"
+  "#0096C7"
 ];
 var reds = [
   "#4A001F",
@@ -1407,19 +1397,16 @@ var grays = [
   "#33333A"
 ];
 var catppuccin = [
-  "#8839ef",
-  "#04a5e5",
   "#d20f39",
   "#179299",
-  "#dd7878",
+  "#8839ef",
   "#40a02b",
-  "#1e66f5",
   "#ea76cb",
-  "#209fb5",
   "#fe640b",
-  "#df8e1d",
+  "#04a5e5",
   "#e64553",
-  "#7287fd"
+  "#1e66f5",
+  "#df8e1d"
 ];
 var themeColors = {
   ["RANDOM" /* Random */]: randoms,
@@ -1506,14 +1493,19 @@ function activate(context) {
     "keybindingsCheatsheet.showCheatsheet",
     async (args) => {
       const appSettingsPath = args?.keymapsConfigPath || getActiveKeybindingsPath();
-      const themeArg = args?.theme;
+      let themeArg = args?.theme;
       const validTheme = Object.values(Theme).includes(themeArg);
       if (!validTheme) {
-        vscode.window.showErrorMessage(
-          `Invalid theme (${themeArg})... choosing random color scheme`
+        themeArg = await vscode.window.showQuickPick(
+          Object.values(Theme).map(
+            (theme2) => theme2.charAt(0).toUpperCase() + theme2.slice(1).toLowerCase()
+          ),
+          {
+            canPickMany: false
+          }
         );
       }
-      const theme = validTheme ? argToTheme[themeArg.toUpperCase()] : argToTheme[DEFAULT_THEME.toUpperCase()];
+      const theme = argToTheme[themeArg.toUpperCase()];
       if (fs.existsSync(appSettingsPath)) {
         const content = fs.readFileSync(appSettingsPath, "utf8");
         const panel = vscode.window.createWebviewPanel(
