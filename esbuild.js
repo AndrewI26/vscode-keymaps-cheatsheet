@@ -1,5 +1,6 @@
 // Code from: https://code.visualstudio.com/api/working-with-extensions/bundling-extension
 const esbuild = require("esbuild");
+const handlebarsPlugin = require("esbuild-plugin-handlebars");
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
@@ -14,15 +15,9 @@ async function main() {
     sourcesContent: false,
     platform: "node",
     outfile: "out/extension.js",
-    external: ["vscode"],
-    loader: {
-      ".hbs": "file",
-    },
+    external: ["vscode", "jsonc-parser"],
     logLevel: "warning",
-    plugins: [
-      /* add to the end of plugins array */
-      esbuildProblemMatcherPlugin,
-    ],
+    plugins: [handlebarsPlugin(), esbuildProblemMatcherPlugin],
   });
   if (watch) {
     await ctx.watch();

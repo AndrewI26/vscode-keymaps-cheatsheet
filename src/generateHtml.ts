@@ -1,6 +1,7 @@
 import path from "path";
 import { GroupedKeybindings, UNGROUPED_KEY } from "./extension";
 import Handlebars from "handlebars";
+import cheatsheetTemplate from "./keybindings.hbs";
 import { readFileSync } from "fs";
 
 export enum Theme {
@@ -182,8 +183,5 @@ export function generateHtml(keybindings: GroupedKeybindings, theme: Theme) {
       })),
     }));
 
-  const templatePath = path.join(__dirname, "keybindings.hbs");
-  const templateContent = readFileSync(templatePath, "utf-8");
-  const template = Handlebars.compile(templateContent);
-  return template({ groups });
+  return cheatsheetTemplate({ groups });
 }

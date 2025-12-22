@@ -84,18 +84,21 @@ type ExtensionArgs = {
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
-    "keymapViewer.showKeymaps",
+    "keybindingsCheatsheet.showCheatsheet",
     async (args: ExtensionArgs) => {
       const appSettingsPath =
         args?.keymapsConfigPath || getActiveKeybindingsPath();
 
       const themeArg = args?.theme;
-      if (!Object.values(Theme).includes(themeArg as Theme)) {
+      const validTheme = Object.values(Theme).includes(themeArg as Theme);
+      if (!validTheme) {
         vscode.window.showErrorMessage(
           `Invalid theme (${themeArg})... choosing random color scheme`,
         );
       }
-      const theme = argToTheme[(args?.theme || DEFAULT_THEME)?.toUpperCase()];
+      const theme = validTheme
+        ? argToTheme[themeArg!.toUpperCase()]
+        : argToTheme[DEFAULT_THEME.toUpperCase()];
 
       if (fs.existsSync(appSettingsPath)) {
         const content = fs.readFileSync(appSettingsPath, "utf8");
