@@ -20,7 +20,7 @@
     "commands": [
       {
         "command": "keybindingsCheatsheet.showCheatsheet",
-        "title": "Show Cheatsheet"
+        "title": "Keybindings Cheatsheet: Show"
       }
     ]
   },
@@ -37,6 +37,7 @@
     "@types/node": "^24.10.1",
     "@types/vscode": "^1.60.0",
     "copyfiles": "^2.4.1",
+    "esbuild-handlebars": "^1.1.0",
     "esbuild-plugin-handlebars": "^1.0.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.7.4",
@@ -45,7 +46,6 @@
   "dependencies": {
     "esbuild": "^0.27.2",
     "handlebars": "^4.7.8",
-    "jsonc-parser": "^3.3.1",
-    "vscode-json-languageservice": "^5.6.3"
+    "jsonc-parser": "^3.3.1"
   }
 }
