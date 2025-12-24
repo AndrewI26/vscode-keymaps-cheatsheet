@@ -3,6 +3,8 @@
 - [Setup](#setup)
 - [Extension Options](#extension-options)
 
+![Cheatsheet Image](images/example.png)
+
 ## Setup
 
 Take an existing keybindings file
