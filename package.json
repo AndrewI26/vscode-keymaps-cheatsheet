@@ -7,7 +7,7 @@
     "url": "https://github.com/AndrewI26/vscode-keymaps-cheatsheet"
   },
   "icon": "images/icon.png",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "https://github.com/AndrewI26/vscode-keymaps-cheatsheet#readme",
   "engines": {
     "vscode": "^1.60.0"
