@@ -3,6 +3,37 @@
 - [Setup](#setup)
 - [Extension Options](#extension-options)
 
+Take a keybindings file like this:
+
+```jsonc
+[
+  // Navigation
+  {
+    "key": "ctrl-h",
+    "command": "workbench.action.navigateLeft",
+    "desc": "Move focus left",
+  },
+
+  // Sidebar
+  {
+    "key": "space e",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "workbench.action.toggleSidebarVisibility",
+        "workbench.files.action.focusFilesExplorer",
+      ],
+    },
+    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && !sideBarFocus",
+    "desc": "Open file explorer",
+  },
+
+  // More keybindings...
+]
+```
+
+And transform it into a keybindings cheatsheet.
+
 ![Cheatsheet Image](images/example.png)
 
 ## Setup
